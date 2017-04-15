@@ -11,14 +11,12 @@
   "author": "noel",
   "contributors": [],
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "xlsx": "^0.9.10"
   },
   "main": "main.js",
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "license": "ISC",
-  "description": ""
+  "description": "app jQuery, Nodejs, con autosuggest"
 }

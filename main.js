@@ -5,50 +5,113 @@
 
 'use strict';
 var express = require( 'express' );
+var bodyParser = require('body-parser');
 var XLSX = require('xlsx');
 var app = express();
 
-var workbook = XLSX.readFile('17codmun.xlsx');
-
-var worksheet = workbook.Sheets['DIC17'];
-    
-var json = XLSX.utils.sheet_to_json(worksheet, {header : 1});
-
-
-var aut = false; //true para autonomia y false para provincia
-var cod = '07';
+var textParser = bodyParser.urlencoded({ extended: false });
 
 var send = [ ];
 
-function num(cod, aut) 
-{
-    for(var i in json) 
-    {
-        var arr = json[i];
-        i++;
-        
-        if( aut && arr[0] === cod )
-        {
-            send.push(arr[2]);
-        }
-        else if( !aut && arr[1] === cod )
-        {
-            send.push(arr[2]);
-        }
-        else 
-        {
-            continue;
-        }
-    }
-};
+var autBook = XLSX.readFile('aut.xlsx').Sheets['uno'];
+var proBook = XLSX.readFile('pro.xlsx').Sheets['uno'];
+var munBook = XLSX.readFile('mun.xlsx').Sheets['uno'];
 
-num(cod, aut);
-
-send = JSON.stringify(send);
-
-console.log(send);
-
+var jsonAut = XLSX.utils.sheet_to_json(autBook, {header : 1});
+var jsonPro = XLSX.utils.sheet_to_json(proBook, {header : 1});
+var jsonMun = XLSX.utils.sheet_to_json(munBook, {header : 1});
 
 var port = 3000;
 app.listen(port);
 console.log('Listening at http://localhost:' + port);
+
+app.post('/', textParser, function(req, res, next) 
+{
+    console.log( 'POST request from: ' + req.rawHeaders[9] );
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
+    
+    var type = req.body.type;
+    var data = req.body.data;
+ 
+    switch(type)
+    {
+        case "ini":
+            aut();
+            res.send(JSON.stringify(send));
+            break;
+        case "aut":
+            pro(data);
+            res.send(JSON.stringify(send));
+            break;
+        case "pro":
+            mun(data);
+            res.send(JSON.stringify(send));
+            break;
+    }
+});
+
+
+function aut()
+{
+    send = [ ];
+    for(var i in jsonAut) 
+    {
+        var arr = jsonAut[i];
+        i++;
+        send.push(arr[1]);
+    }
+}
+
+function pro( data ) 
+{
+    send = [ ];
+    var cod;
+    for(var i in jsonAut) 
+    {
+        var arr = jsonAut[i];
+        i++;
+        if( arr[1] === data )
+        {
+            cod = arr[0];
+        }
+    }
+    
+    for(var i in jsonPro) 
+    {
+        var arr = jsonPro[i];
+        i++;
+        
+        if( arr[0] === cod )
+        {
+            send.push(arr[2]);
+        }
+    }
+};
+
+function mun( data ) 
+{
+    send = [ ];
+    var cod;
+    for(var i in jsonPro) 
+    {
+        var arr = jsonPro[i];
+        i++;
+        if( arr[2] === data )
+        {
+            cod = arr[1];
+        }
+    }
+    
+    for(var i in jsonMun) 
+    {
+        var arr = jsonMun[i];
+        i++;
+        
+        if( arr[0] === cod )
+        {
+            send.push(arr[1]);
+        } 
+    }
+};

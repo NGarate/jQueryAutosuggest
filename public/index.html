@@ -1,27 +1,142 @@
 <!DOCTYPE html>
-<!--
-    author N.Gárate
-    created on 12.04.2017
--->
-<html>
-    <head>
-        <title>Mi Ciudad</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    </head>
-   <body>
-        
-        <div>Elige tu cidudad</div>
-        
-        <form>
-            <fieldset>
-                <legend>Cidudad:</legend>
-                Comunidad autónoma: <input type="text"><br>
-                Provincia: <input type="text"><br>
-                Municipio: <input type="text">
-            </fieldset>
-        </form> 
-    </body>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="Noel" content="AutoSuggest jQuery">
+    <link rel="icon" type="image/png" href="img/jQuery.png">
+
+    <title>Elige tu municipio</title>
+    
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link href="css/small-business.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <img class="img-responsive logo"  src="img/jquery-logo.png" alt="jQuery">
+                    </a>
+                </div>               
+            </div>
+            <!-- nav links -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#">Tu municipio</a>
+                    </li>
+                    <li>
+                        <a href="#">Sobre nosotros</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+
+
+    <!-- Contact Form - START -->
+    <div class="container" id="form">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-sm">
+                    <form class="form-horizontal" action="http://localhost:3000/" method="post">
+                        <fieldset>
+                            <legend class="text-center header">Elige tu municipio:</legend>
+
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-arrow-circle-o-right  bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <input id="aut" disabled name="aut" type="text" placeholder="Comunidad Autonoma" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-arrow-right  bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <input id="pro" disabled name="pro" type="text" placeholder="Provincia" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-long-arrow-right bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <input id="mun" disabled name="mun" type="text" placeholder="Municipio" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div id="divSub" class="col-lg-4 text-center"></div>
+                                <div id="divSub" class="col-lg-2 text-center">
+                                    <button id="sub" type="submit" disabled="disabled" class="btn btn-primary btn-lg">Enviar</button>
+                                </div>
+                                <div id="divres" class="col-lg-2 text-center">
+                                    <button id="res" type="reset" class="btn btn-primary btn-lg">Reiniciar</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>  Seleciona tú municipio <b>by Noel Gárate</b></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+    <!-- jQuery UI -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome CDN JavaScript -->
+    <script src="https://use.fontawesome.com/07468074da.js"></script>
+    
+    <script src="js/main.js"></script>
+    
+</body>
+
 </html>
