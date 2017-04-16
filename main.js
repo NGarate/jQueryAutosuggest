@@ -2,8 +2,8 @@
  * @author N.Gárate
  * created 12.04.2017
  */
-
 'use strict';
+
 var express = require( 'express' );
 var bodyParser = require('body-parser');
 var XLSX = require('xlsx');
@@ -48,6 +48,9 @@ app.post('/', textParser, function(req, res, next)
         case "pro":
             mun(data);
             res.send(JSON.stringify(send));
+            break;
+        case "form":
+            res.send(JSON.stringify(data));
             break;
     }
 });

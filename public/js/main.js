@@ -2,6 +2,7 @@
  *  @author N.Gárate
  *  created on 12.04.2017
  */
+'use strict';
 
 var arrayDataAut = [ ];
 var arrayDataPro = [ ];
@@ -16,7 +17,7 @@ function()
     {
         console.log('Autonomia ya selecionada');
     }
-    else
+    if ( !$('#pro').is('[readonly]') )
     {
         var ok = false;
         for( var i in arrayDataAut ) 
@@ -61,7 +62,7 @@ function()
     {
         console.log('Provincia ya selecionada');
     }
-    else
+    if ( !$('#pro').is('[readonly]') )
     {
 
         var ok = false;
@@ -100,14 +101,14 @@ function()
     }
 });
 
-$('#divSub').hover(
+$('.divForm').hover(
 function()
 {
     if ( $('#mun').is('[readonly="true"]') )
     {
         console.log('Municipio ya selecionado');
     }
-    else
+    if ( !$('#mun').is('[readonly]') )
     {
         var ok = false;
         for( var i in arrayDataMun ) 
@@ -188,3 +189,27 @@ function reset()
     });	
 }
 
+
+
+$(".form-horizontal").submit(
+function(e) 
+{ 
+    $.ajax(
+    { 
+        url: 'http://localhost:3000',
+        type: "post",
+        dataType: 'json',
+        data: {type: "form", data: $("#mun").val()},
+        success: function( data, status )
+        { 
+            console.log(status);
+            if(status === 'success')
+            {       
+                console.log(data);
+                $( "#sub" ).prop('disabled', true);
+                alert('Gracias por tu participación');
+            }
+        }
+    });
+    e.preventDefault();
+});

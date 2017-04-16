@@ -8,7 +8,7 @@
     "client",
     "browser"
   ],
-  "author": "noel",
+  "author": "Noel Gárate",
   "contributors": [],
   "dependencies": {
     "body-parser": "^1.17.1",
