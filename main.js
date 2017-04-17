@@ -5,6 +5,7 @@
 'use strict';
 
 var express = require( 'express' );
+var path = require( 'path' );
 var bodyParser = require('body-parser');
 var XLSX = require('xlsx');
 var app = express();
@@ -24,6 +25,35 @@ var jsonMun = XLSX.utils.sheet_to_json(munBook, {header : 1});
 var port = 3000;
 app.listen(port);
 console.log('Listening at http://localhost:' + port);
+
+
+app.use('/img',express.static(path.join(__dirname, '/public/img')));
+app.use('/js',express.static(path.join(__dirname, '/public/js')));
+app.use('/css',express.static(path.join(__dirname, '/public/css')));
+
+app.get('/', function(req, res)
+{
+    res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
+    var options = 
+    {
+        root: __dirname + '/public/',
+        dotfiles: 'deny',
+        headers: 
+        {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    };
+
+    res.sendFile('home.html', options);
+});
+
+app.get(/^(.+)$/, function(req, res)
+{ 
+   console.log('static file request : ' + req.params);
+   res.sendfile( __dirname + req.params[0]); 
+});
+
 
 app.post('/', textParser, function(req, res, next) 
 {
