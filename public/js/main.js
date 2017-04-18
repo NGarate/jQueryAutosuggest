@@ -4,192 +4,14 @@
  */
 'use strict';
 
-var arrayDataAut = [ ];
-var arrayDataPro = [ ];
-var arrayDataMun = [ ];
+var dataSet = [ ];
+var controlEstado = 0;
 
-$(document).ready(inicio());
+$(document).ready( inicio );
 
-$('#aut' ).blur(
-function()
-{
-    if ( $('#aut').is('[readonly="true"]') )
-    {
-        console.log('Autonomia ya selecionada');
-    }
-    if ( !$('#pro').is('[readonly]') )
-    {
-        var ok = false;
-        for( var i in arrayDataAut ) 
-        {
-            var arr = arrayDataAut[i];
-            if( $('#aut').val() === arr )
-            {
-                ok = true;
-                break;
-            }
-            i++;
-        }
+$( '#form' ).mousemove( select );
 
-        if(ok)
-        {
-            $.ajax(
-            {
-                url: "http://localhost:3000",
-                type: 'post',
-                dataType: 'json',
-                data: { type: 'aut', data: $('#aut').val() },
-                success: function( data, status )
-                { 
-                    console.log(status);
-                    if(status === 'success')
-                    {       
-                        $('#pro').prop('disabled', false);
-                    }
-                    arrayDataPro = data;
-                    $( "#aut" ).prop('readonly', true);
-                    $( "#pro" ).autocomplete({ source: arrayDataPro });
-                }
-            });
-        }
-    }
-});
-
-$('#pro' ).blur(
-function()
-{
-    if ( $('#pro').is('[readonly="true"]') )
-    {
-        console.log('Provincia ya selecionada');
-    }
-    if ( !$('#pro').is('[readonly]') )
-    {
-
-        var ok = false;
-        for( var i in arrayDataPro ) 
-        {
-            var arr = arrayDataPro[i];
-            if( $('#pro').val() === arr )
-            {
-                ok = true;
-                break;
-            }
-            i++;
-        }
-
-        if(ok)
-        {        
-            $.ajax(
-            {
-                url: "http://localhost:3000",
-                type: 'post',
-                dataType: 'json',
-                data: { type: 'pro', data: $('#pro').val() },
-                success: function( data, status )
-                { 
-                    console.log(status);
-                    if(status === 'success')
-                    {       
-                        $('#mun').prop('disabled', false);
-                    }
-                    arrayDataMun = data;
-                    $( "#pro" ).prop('readonly', true);
-                    $( "#mun" ).autocomplete({ source: arrayDataMun }); 
-                }
-            });
-        }
-    }
-});
-
-$('.divForm').hover(
-function()
-{
-    if ( $('#mun').is('[readonly="true"]') )
-    {
-        console.log('Municipio ya selecionado');
-    }
-    if ( !$('#mun').is('[readonly]') )
-    {
-        var ok = false;
-        for( var i in arrayDataMun ) 
-        {
-            var arr = arrayDataMun[i];
-            if( $('#mun').val() === arr )
-            {
-                ok = true;
-                break;
-            }
-            i++;
-        }
-
-        if(ok)
-        {
-            $( "#mun" ).prop('readonly', true);
-            $('#sub').prop('disabled', false);
-        }
-    }
-});
-
-$("button[type='reset']").on("click", function()
-{
-    reset();
-});
-
-function inicio()
-{
-    $.ajax(
-    {
-        url: "http://localhost:3000",
-        type: 'post',
-        dataType: 'json',
-        data: { type: "ini", data: 'none' },
-        success: function( data, status )
-        { 
-            console.log(status);
-            if(status === 'success')
-            {       
-                $('#aut').prop('disabled', false);
-            }
-            arrayDataAut = data;
-            $( "#aut" ).autocomplete({ source: arrayDataAut });  
-        }
-    });	
-}
-
-function reset()
-{
-    arrayDataAut = [ ];
-    arrayDataPro = [ ];
-    arrayDataMun = [ ];
-    
-    $( "#aut" ).prop('readonly', false);
-    $( "#pro" ).prop('readonly', false);
-    $( "#mun" ).prop('readonly', false);
-    
-    $( "#aut" ).prop('disabled', true);
-    $( "#pro" ).prop('disabled', true);
-    $( "#mun" ).prop('disabled', true);
-    
-    $.ajax(
-    {
-        url: "http://localhost:3000",
-        type: 'post',
-        dataType: 'json',
-        data: { type: "ini", data: 'none' },
-        success: function( data, status )
-        { 
-            console.log(status);
-            if(status === 'success')
-            {       
-                $('#aut').prop('disabled', false);
-            }
-            arrayDataAut = data;
-            $( "#aut" ).autocomplete({ source: arrayDataAut });  
-        }
-    });	
-}
-
-
+$( "button[type='reset']" ).click( reset );
 
 $(".form-horizontal").submit(
 function(e) 
@@ -213,3 +35,182 @@ function(e)
     });
     e.preventDefault();
 });
+
+function select()
+{
+    switch( controlEstado )
+    {
+        case 1:
+            aut();
+            break;
+        case 2:
+            pro();
+            break;
+        case 3:
+            mun();
+            break;    
+    }
+}
+
+function inicio()
+{
+    console.log( 'Peticion inical' );
+    $.ajax(
+    {
+        url: "http://localhost:3000",
+        type: 'post',
+        dataType: 'json',
+        data: { type: "ini", data: 'none' },
+        success: function( data, status )
+        { 
+            console.log( 'Peticion inical: ' + status );
+            $( '#aut' ).prop('disabled', false);
+            dataSet = data;
+            $( '#aut' ).autocomplete({ source: dataSet });
+            controlEstado = 1;
+        }
+    });	
+}
+
+function aut()
+{
+    if ( $('#aut').is('[disabled="true"]') )
+    {
+        console.log('Autonomia ya selecionada');
+    }
+    else
+    {        
+        var inVal = $('#aut').val();
+        var ok = match( inVal );
+
+        if(ok)
+        {
+            $.ajax(
+            {
+                url: "http://localhost:3000",
+                type: 'post',
+                dataType: 'json',
+                data: { type: 'aut', data: $('#aut').val() },
+                success: function( data, status )
+                { 
+                    console.log( 'aut resp status: ' + status );
+                    
+                    $('#pro').prop('disabled', false);
+                    dataSet = data;
+                    $( '#aut' ).prop('disabled', true);
+                    $( '#aut' ).parent().addClass('has-success');
+                    
+                    $( '#pro' ).autocomplete({ source: dataSet });
+                    controlEstado = 2;
+                }
+            });
+        }
+    }
+}
+
+function pro()
+{
+    if ( $('#pro').is('[disabled="true"]') )
+    {
+        console.log('Provincia ya selecionada');
+    }
+    else
+    {
+        var inVal = $('#pro').val();
+        var ok = match( inVal );
+
+        if(ok)
+        {        
+            $.ajax(
+            {
+                url: "http://localhost:3000",
+                type: 'post',
+                dataType: 'json',
+                data: { type: 'pro', data: $('#pro').val() },
+                success: function( data, status )
+                { 
+                    console.log( 'pro resp status: ' + status );
+                    if(status === 'success')
+                    {       
+                        $('#mun').prop('disabled', false);
+                    }
+                    dataSet = data;
+                    $( '#pro').prop('disabled', true);
+                    $( '#pro' ).parent().addClass('has-success');
+                    $( '#mun' ).autocomplete({ source: dataSet }); 
+                    controlEstado = 3;
+                }
+            });
+        }
+    }
+}
+
+function mun()
+{
+    if ( $('#mun').is('[disabled="true"]') )
+    {
+        console.log('Municipio ya selecionado');
+    }
+    else
+    {      
+        var inVal = $('#mun').val();
+        var ok = match( inVal );
+
+        if(ok)
+        {
+            console.log( 'mun ok' );
+            $( "#mun" ).prop('disabled', true);
+            $( '#mun' ).parent().addClass('has-success');
+            $( '#sub' ).prop('disabled', false);
+            controlEstado = 4;
+        }
+    }
+};
+
+function reset()
+{
+    dataSet = [ ];
+    
+    $( "#aut" ).prop('disabled', true);
+    $( "#pro" ).prop('disabled', true);
+    $( "#mun" ).prop('disabled', true);
+    
+    $('#aut').parent().removeClass('has-success');
+    $('#pro').parent().removeClass('has-success');
+    $('#mun').parent().removeClass('has-success');
+
+    $.ajax(
+    {
+        url: "http://localhost:3000",
+        type: 'post',
+        dataType: 'json',
+        data: { type: "ini", data: 'none' },
+        success: function( data, status )
+        { 
+            console.log(status);
+            if(status === 'success')
+            {       
+                $('#aut').prop('disabled', false);
+            }
+            dataSet = data;
+            $( "#aut" ).autocomplete({ source: dataSet });
+            controlEstado = 1;
+        }
+    });	
+}
+
+function match( inVal )
+{
+    var ok = false;
+    for( var i in dataSet ) 
+    {
+        var arr = dataSet[i];
+        if( inVal === arr )
+        {
+            ok = true;
+            break;
+        }
+        i++;
+    }
+    return ok;
+}
