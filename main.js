@@ -28,7 +28,10 @@ var jsonMun = XLSX.utils.sheet_to_json(munBook, {header : 1});
 
 var port = 3000;
 app.listen(port);
-console.log('Listening at http://localhost:' + port);
+require('dns').lookup(require('os').hostname(), function (err, add, fam) 
+{
+    console.log('Listening at ' + add +':' +port);
+});
 
 
 /* Web server de los archivos estaticos */

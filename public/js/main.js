@@ -6,6 +6,7 @@
 
 var dataSet = [ ];
 var controlEstado = 0;
+var uri = 'http://localhost:3000';
 
 $(document).ready( inicio );
 
@@ -18,7 +19,7 @@ function(e)
 { 
     $.ajax(
     { 
-        url: 'http://localhost:3000',
+        url: uri,
         type: "post",
         dataType: 'json',
         data: {type: "form", data: $("#mun").val()},
@@ -57,7 +58,7 @@ function inicio()
     console.log( 'Peticion inical' );
     $.ajax(
     {
-        url: "http://localhost:3000",
+        url: uri,
         type: 'post',
         dataType: 'json',
         data: { type: "ini", data: 'none' },
@@ -87,7 +88,7 @@ function aut()
         {
             $.ajax(
             {
-                url: "http://localhost:3000",
+                url: uri,
                 type: 'post',
                 dataType: 'json',
                 data: { type: 'aut', data: $('#aut').val() },
@@ -123,7 +124,7 @@ function pro()
         {        
             $.ajax(
             {
-                url: "http://localhost:3000",
+                url: uri,
                 type: 'post',
                 dataType: 'json',
                 data: { type: 'pro', data: $('#pro').val() },
@@ -181,7 +182,7 @@ function reset()
 
     $.ajax(
     {
-        url: "http://localhost:3000",
+        url: uri,
         type: 'post',
         dataType: 'json',
         data: { type: "ini", data: 'none' },
