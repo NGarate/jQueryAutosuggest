@@ -63,16 +63,20 @@ app.get(/^(.+)$/, function(req, res)
 });
 
 /* respuestas a las peticiones post en / */
-app.post('/', textParser, function(req, res, next) 
+app.post('/search', textParser, function(req, res, next) 
 {
-    console.log( 'POST request received');
+    console.log( 'POST request received' );
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
     res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
     
     var type = req.body.type;
-    var data = req.body.data;
- 
+    var data = req.body.term;
+    
+    console.log( req.body );
+    console.log( type );
+    console.log( data );
+    
     switch(type)
     {
         case "ini":

@@ -4,15 +4,70 @@
  */
 'use strict';
 
-var dataSet = [ ];
-var controlEstado = 0;
+var cache = { };
 var uri = 'http://localhost:3000';
 
-$(document).ready( inicio );
+var cache = { };
+$("#aut").autocomplete( autoSet( $("#aut").prop( 'id' ) ));
+$("#pro").autocomplete( autoSet( $("#pro").prop( 'id' ) ));
+$("#mun").autocomplete( autoSet( $("#mun").prop( 'id' ) ));
 
-$( '#form' ).mousemove( select );
 
-$( "button[type='reset']" ).click( reset );
+$( "#aut" ).on( "autocompletechange", autoChange );
+$( "#pro" ).on( "autocompletechange", autoChange );
+$( "#mun" ).on( "autocompletechange", autoChange );
+
+var autoSet = function( id )
+{
+    var autoOpt = 
+    {
+        minLength: 2,
+        source: 
+            function ( request, response ) 
+            {
+                var term = request.term;
+                request.type = id;
+                console.log( request );
+                if ( term in cache ) 
+                {
+                    response( cache[ term ] );
+                    return;
+                }
+
+                $.post( uri, request, 
+                    function( data, status, xhr ) 
+                    {
+                        cache[ term ] = data;
+                        response( data );
+                        console.log( 'aut autocomplete Status: ' + status );
+                    }, 
+                    'json'
+                );
+            }
+    };
+    return autoOpt;
+};
+
+var autoChange = function( event, ui ) 
+{
+    var sendData = { term: $(this).val(), type: $(this).prop( 'id' )+'IsOk' } ;
+    $.post( uri, sendData, 
+        function( data, status, xhr ) 
+        {
+            console.log( status );
+            if( data === true )
+            {
+                this.parent().addClass( 'has-success');
+            }
+            else
+            {
+                this.parent().addClass( 'has-error');
+            }
+        }, 
+        'json'
+    );
+};
+/*
 
 $(".form-horizontal").submit(
 function(e) 
@@ -37,181 +92,4 @@ function(e)
     e.preventDefault();
 });
 
-function select()
-{
-    switch( controlEstado )
-    {
-        case 1:
-            aut();
-            break;
-        case 2:
-            pro();
-            break;
-        case 3:
-            mun();
-            break;    
-    }
-}
-
-function inicio()
-{
-    console.log( 'Peticion inical' );
-    $.ajax(
-    {
-        url: uri,
-        type: 'post',
-        dataType: 'json',
-        data: { type: "ini", data: 'none' },
-        success: function( data, status )
-        { 
-            console.log( 'Peticion inical: ' + status );
-            $( '#aut' ).prop('disabled', false);
-            dataSet = data;
-            $( '#aut' ).autocomplete({ source: dataSet });
-            controlEstado = 1;
-        }
-    });	
-}
-
-function aut()
-{
-    if ( $('#aut').is('[disabled="true"]') )
-    {
-        console.log('Autonomia ya selecionada');
-    }
-    else
-    {        
-        var inVal = $('#aut').val();
-        var ok = match( inVal );
-
-        if(ok)
-        {
-            $.ajax(
-            {
-                url: uri,
-                type: 'post',
-                dataType: 'json',
-                data: { type: 'aut', data: $('#aut').val() },
-                success: function( data, status )
-                { 
-                    console.log( 'aut resp status: ' + status );
-                    
-                    $('#pro').prop('disabled', false);
-                    dataSet = data;
-                    $( '#aut' ).prop('disabled', true);
-                    $( '#aut' ).parent().addClass('has-success');
-                    
-                    $( '#pro' ).autocomplete({ source: dataSet });
-                    controlEstado = 2;
-                }
-            });
-        }
-    }
-}
-
-function pro()
-{
-    if ( $('#pro').is('[disabled="true"]') )
-    {
-        console.log('Provincia ya selecionada');
-    }
-    else
-    {
-        var inVal = $('#pro').val();
-        var ok = match( inVal );
-
-        if(ok)
-        {        
-            $.ajax(
-            {
-                url: uri,
-                type: 'post',
-                dataType: 'json',
-                data: { type: 'pro', data: $('#pro').val() },
-                success: function( data, status )
-                { 
-                    console.log( 'pro resp status: ' + status );
-                    if(status === 'success')
-                    {       
-                        $('#mun').prop('disabled', false);
-                    }
-                    dataSet = data;
-                    $( '#pro').prop('disabled', true);
-                    $( '#pro' ).parent().addClass('has-success');
-                    $( '#mun' ).autocomplete({ source: dataSet }); 
-                    controlEstado = 3;
-                }
-            });
-        }
-    }
-}
-
-function mun()
-{
-    if ( $('#mun').is('[disabled="true"]') )
-    {
-        console.log('Municipio ya selecionado');
-    }
-    else
-    {      
-        var inVal = $('#mun').val();
-        var ok = match( inVal );
-
-        if(ok)
-        {
-            console.log( 'mun ok' );
-            $( "#mun" ).prop('disabled', true);
-            $( '#mun' ).parent().addClass('has-success');
-            $( '#sub' ).prop('disabled', false);
-            controlEstado = 4;
-        }
-    }
-};
-
-function reset()
-{
-    dataSet = [ ];
-    
-    $( "#aut" ).prop('disabled', true);
-    $( "#pro" ).prop('disabled', true);
-    $( "#mun" ).prop('disabled', true);
-    
-    $('#aut').parent().removeClass('has-success');
-    $('#pro').parent().removeClass('has-success');
-    $('#mun').parent().removeClass('has-success');
-
-    $.ajax(
-    {
-        url: uri,
-        type: 'post',
-        dataType: 'json',
-        data: { type: "ini", data: 'none' },
-        success: function( data, status )
-        { 
-            console.log(status);
-            if(status === 'success')
-            {       
-                $('#aut').prop('disabled', false);
-            }
-            dataSet = data;
-            $( "#aut" ).autocomplete({ source: dataSet });
-            controlEstado = 1;
-        }
-    });	
-}
-
-function match( inVal )
-{
-    var ok = false;
-    for( var i in dataSet ) 
-    {
-        var arr = dataSet[i];
-        if( inVal === arr )
-        {
-            ok = true;
-            break;
-        }
-        i++;
-    }
-    return ok;
-}
+*/
