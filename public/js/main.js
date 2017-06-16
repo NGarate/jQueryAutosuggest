@@ -5,14 +5,16 @@
  */
 'use strict';
 
-var arrayDataAut = [ ];
-var arrayDataPro = [ ];
-var arrayDataMun = [ ];
+var cache = { };
+var uri = 'http://localhost:3000';
 
-$(document).ready(inicio());
+var cache = { };
+$("#aut").autocomplete( autoSet( $("#aut").prop( 'id' ) ));
+$("#pro").autocomplete( autoSet( $("#pro").prop( 'id' ) ));
+$("#mun").autocomplete( autoSet( $("#mun").prop( 'id' ) ));
 
 
-$("#aut option:selected").text.change("function()
+<$("#aut option:selected").text.change("function()
 {
 	if($('#aut').val() !== "")
     {
@@ -60,10 +62,46 @@ $("#pro option:selected").text.change("function()
 	}
 });
 
+>>>>>>>-master
+======
+$$( "#aut" ).on( "autocompletechange", autoChange );
+$( "#pro" ).on( "autocompletechange", autoChange );
+$( "#mun" ).on( "autocompletechange", autoChange );
 
-function inicio()
+var autoSet = function( id )
 {
-    $.ajax(
+    var autoOpt = 
+    {
+        minLength: 2,
+        source: 
+            function ( request, response ) 
+            {
+                var term = request.term;
+                request.type = id;
+                console.log( request );
+                if ( term in cache ) 
+                {
+                    response( cache[ term ] );
+                    return;
+                }
+
+                $.post( uri, request, 
+                    function( data, status, xhr ) 
+                    {
+                        cache[ term ] = data;
+                        response( data );
+                        console.log( 'aut autocomplete Status: ' + status );
+                    }, 
+                    'json'
+                );
+            }
+    };
+    return autoOpt;
+};
+>>>>>>>+origin/master
+var autoChange = function( event, ui ) 
+{
+<    $.ajax(
     {
         url: "http://localhost:3000",
         type: 'post',
@@ -80,13 +118,34 @@ function inicio()
         }
     });	
 }
+>>>>>>> master
+======
+    var sendData = { term: $(this).val(), type: $(this).prop( 'id' )+'IsOk' } ;
+    $.post( uri, sendData, 
+        function( data, status, xhr ) 
+        {
+            console.log( status );
+            if( data === true )
+            {
+                this.parent().addClass( 'has-success');
+            }
+            else
+            {
+                this.parent().addClass( 'has-error');
+            }
+        }, 
+        'json'
+    );
+};
+/*
+>>>>>>> origin/master
 
 $(".form-horizontal").submit(
 function(e) 
 { 
     $.ajax(
     { 
-        url: 'http://localhost:3000',
+        url: uri,
         type: "post",
         dataType: 'json',
         data: {type: "form", data: $("#mun").val()},
@@ -102,3 +161,5 @@ function(e)
     });
     e.preventDefault();
 });
+
+*/

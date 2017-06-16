@@ -14,6 +14,8 @@ var textParser = bodyParser.urlencoded({ extended: false });
 
 var send = [ ];
 
+
+/* Excel con los datos de las autonomias, provincias y municipio de españa */
 var autBook = XLSX.readFile('aut.xlsx').Sheets['uno'];
 var proBook = XLSX.readFile('pro.xlsx').Sheets['uno'];
 var munBook = XLSX.readFile('mun.xlsx').Sheets['uno'];
@@ -22,11 +24,17 @@ var jsonAut = XLSX.utils.sheet_to_json(autBook, {header : 1});
 var jsonPro = XLSX.utils.sheet_to_json(proBook, {header : 1});
 var jsonMun = XLSX.utils.sheet_to_json(munBook, {header : 1});
 
+
+
 var port = 3000;
 app.listen(port);
-console.log('Listening at http://localhost:' + port);
+require('dns').lookup(require('os').hostname(), function (err, add, fam) 
+{
+    console.log('Listening at ' + add +':' +port);
+});
 
 
+/* Web server de los archivos estaticos */
 app.use('/img',express.static(path.join(__dirname, '/public/img')));
 app.use('/js',express.static(path.join(__dirname, '/public/js')));
 app.use('/css',express.static(path.join(__dirname, '/public/css')));
@@ -54,17 +62,21 @@ app.get(/^(.+)$/, function(req, res)
    res.sendfile( __dirname + req.params[0]); 
 });
 
-
-app.post('/', textParser, function(req, res, next) 
+/* respuestas a las peticiones post en / */
+app.post('/search', textParser, function(req, res, next) 
 {
-    console.log( 'POST request from: ' + req.rawHeaders[9] );
+    console.log( 'POST request received' );
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
     res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
     
     var type = req.body.type;
-    var data = req.body.data;
- 
+    var data = req.body.term;
+    
+    console.log( req.body );
+    console.log( type );
+    console.log( data );
+    
     switch(type)
     {
         case "ini":
