@@ -1,8 +1,8 @@
-/*
- *  @author N.Gárate
- *  created on 12.04.2017
- *. change on 16/06/2017
- */
+*
+*  @author N.Gárate
+*  created on 12.04.2017
+*. change on 16/06/2017
+*/
 'use strict';
 
 var cache = { };
@@ -32,22 +32,22 @@ $( document ).ready(function()
         }
     });
 
-});
+})
 
 $('#aut').on('input', function()
 {
-    $( "#pro" ).val('');
+    $( "#pro" ).val('')
     arrayDataPro = [ ];
-    $( "#pro" ).autocomplete({ source: arrayDataPro });
-    $( "#mun" ).val('');
-    arrayDataMun = [ ];
-    $( "#mun" ).autocomplete({ source: arrayDataMun });
+	$( "#pro" ).autocomplete({ source: arrayDataPro });
+    $( "#mun" ).val('')
+	arrayDataMun = [ ];
+	$( "#mun" ).autocomplete({ source: arrayDataMun });
 	revisaSiCorrecto();
 });
 
 $('#pro').on('input', function()
 {
-    $( "#mun" ).val('');
+    $( "#mun" ).val('')
 	arrayDataMun = [ ];
 	$( "#mun" ).autocomplete({ source: arrayDataMun });
 	revisaSiCorrecto();
@@ -104,7 +104,7 @@ var solicitaProvincia = function()
 			}
 		}
 	});
-};
+}
 
 var solicitaMunicipio = function()
 {
@@ -144,3 +144,4 @@ $.post( uri, sendData,
     'json'
 );
 */
+
