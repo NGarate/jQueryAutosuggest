@@ -36,10 +36,10 @@ $( document ).ready(function()
 
 $('#aut').on('input', function()
 {
-    $( "#pro" ).val('')
+    $( "#pro" ).val('');
     arrayDataPro = [ ];
 	$( "#pro" ).autocomplete({ source: arrayDataPro });
-    $( "#mun" ).val('')
+    $( "#mun" ).val('');
 	arrayDataMun = [ ];
 	$( "#mun" ).autocomplete({ source: arrayDataMun });
 	revisaSiCorrecto();
@@ -47,7 +47,7 @@ $('#aut').on('input', function()
 
 $('#pro').on('input', function()
 {
-    $( "#mun" ).val('')
+    $( "#mun" ).val('');
 	arrayDataMun = [ ];
 	$( "#mun" ).autocomplete({ source: arrayDataMun });
 	revisaSiCorrecto();
@@ -104,7 +104,7 @@ var solicitaProvincia = function()
 			}
 		}
 	});
-}
+};
 
 var solicitaMunicipio = function()
 {
