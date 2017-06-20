@@ -1,95 +1,146 @@
-/* 
+/*
  *  @author N.Gárate
  *  created on 12.04.2017
+ *. change on 16/06/2017
  */
 'use strict';
 
 var cache = { };
-var uri = 'http://localhost:3000';
+var uri = 'http://192.168.100.78:3000/search';
 
 var cache = { };
-$("#aut").autocomplete( autoSet( $("#aut").prop( 'id' ) ));
-$("#pro").autocomplete( autoSet( $("#pro").prop( 'id' ) ));
-$("#mun").autocomplete( autoSet( $("#mun").prop( 'id' ) ));
+var arrayDataAut = [ ];
+var arrayDataPro = [ ];
+var arrayDataMun = [ ];
 
-
-$( "#aut" ).on( "autocompletechange", autoChange );
-$( "#pro" ).on( "autocompletechange", autoChange );
-$( "#mun" ).on( "autocompletechange", autoChange );
-
-var autoSet = function( id )
+$( document ).ready(function()
 {
-    var autoOpt = 
-    {
-        minLength: 2,
-        source: 
-            function ( request, response ) 
-            {
-                var term = request.term;
-                request.type = id;
-                console.log( request );
-                if ( term in cache ) 
-                {
-                    response( cache[ term ] );
-                    return;
-                }
-
-                $.post( uri, request, 
-                    function( data, status, xhr ) 
-                    {
-                        cache[ term ] = data;
-                        response( data );
-                        console.log( 'aut autocomplete Status: ' + status );
-                    }, 
-                    'json'
-                );
-            }
-    };
-    return autoOpt;
-};
-
-var autoChange = function( event, ui ) 
-{
-    var sendData = { term: $(this).val(), type: $(this).prop( 'id' )+'IsOk' } ;
-    $.post( uri, sendData, 
-        function( data, status, xhr ) 
-        {
-            console.log( status );
-            if( data === true )
-            {
-                this.parent().addClass( 'has-success');
-            }
-            else
-            {
-                this.parent().addClass( 'has-error');
-            }
-        }, 
-        'json'
-    );
-};
-/*
-
-$(".form-horizontal").submit(
-function(e) 
-{ 
     $.ajax(
-    { 
+    {
         url: uri,
-        type: "post",
+        type: 'post',
         dataType: 'json',
-        data: {type: "form", data: $("#mun").val()},
+        data: { type: 'ini', data: 'none' },
         success: function( data, status )
-        { 
+        {
             console.log(status);
             if(status === 'success')
-            {       
-                console.log(data);
-                $( "#sub" ).prop('disabled', true);
-                alert('Gracias por tu participación');
+            {
+                arrayDataAut = data;
+                $( "#aut" ).autocomplete({ source: arrayDataAut });
             }
         }
     });
-    e.preventDefault();
+
 });
 
+$('#aut').on('input', function()
+{
+    $( "#pro" ).val('');
+    arrayDataPro = [ ];
+    $( "#pro" ).autocomplete({ source: arrayDataPro });
+    $( "#mun" ).val('');
+    arrayDataMun = [ ];
+    $( "#mun" ).autocomplete({ source: arrayDataMun });
+	revisaSiCorrecto();
+});
+
+$('#pro').on('input', function()
+{
+    $( "#mun" ).val('');
+	arrayDataMun = [ ];
+	$( "#mun" ).autocomplete({ source: arrayDataMun });
+	revisaSiCorrecto();
+});
+
+$("input").focusout(function(event)
+{
+	revisaSiCorrecto();
+});
+
+var revisaSiCorrecto = function()
+{
+	if (arrayDataPro.length === 0 && arrayDataMun.length === 0 )
+	{
+		for (var key in arrayDataAut)
+		{
+			if (arrayDataAut[key] === $('#aut').val() )
+			{
+				solicitaProvincia();
+				break;
+			}
+		}
+	}
+
+	if (arrayDataMun.length === 0 )
+	{
+		for (var key in arrayDataPro)
+		{
+			if (arrayDataPro[key] === $('#pro').val() )
+			{
+				solicitaMunicipio();
+				break;
+			}
+		}
+	}
+};
+
+var solicitaProvincia = function()
+{
+	$.ajax(
+	{
+		url: uri,
+		type: 'post',
+		dataType: 'json',
+		data: { type: 'aut', data: $('#aut').val() },
+		success: function( data, status )
+		{
+			if(status === 'success')
+			{
+                console.log("Provincias de: " + $('#aut').val() + " ||| recibidas: " + data);
+				arrayDataPro = data;
+
+				$( "#pro" ).autocomplete({ source: arrayDataPro });
+			}
+		}
+	});
+};
+
+var solicitaMunicipio = function()
+{
+	$.ajax(
+	{
+		url: uri,
+		type: 'post',
+		dataType: 'json',
+		data: { type: 'pro', data: $('#pro').val() },
+		success: function( data, status )
+		{
+			if(status === 'success')
+			{
+                console.log("Municipios recibidas");
+				arrayDataMun = data;
+				$( "#mun" ).autocomplete({ source: arrayDataMun });
+			}
+		}
+	});
+};
+
+/*
+var sendData = { term: $(this).val(), type: $(this).prop( 'id' )+'IsOk' } ;
+$.post( uri, sendData,
+    function( data, status, xhr )
+    {
+        console.log( status );
+        if( data === true )
+        {
+            this.parent().addClass( 'has-success');
+        }
+        else
+        {
+            this.parent().addClass( 'has-error');
+        }
+    },
+    'json'
+);
 */
