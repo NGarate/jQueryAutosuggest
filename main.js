@@ -1,4 +1,4 @@
-/* 
+/*
  * @author N.Gárate
  * created 12.04.2017
  */
@@ -28,7 +28,7 @@ var jsonMun = XLSX.utils.sheet_to_json(munBook, {header : 1});
 
 var port = 3000;
 app.listen(port);
-require('dns').lookup(require('os').hostname(), function (err, add, fam) 
+require('dns').lookup(require('os').hostname(), function (err, add, fam)
 {
     console.log('Listening at ' + add +':' +port);
 });
@@ -42,11 +42,11 @@ app.use('/css',express.static(path.join(__dirname, '/public/css')));
 app.get('/', function(req, res)
 {
     res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
-    var options = 
+    var options =
     {
         root: __dirname + '/public/',
         dotfiles: 'deny',
-        headers: 
+        headers:
         {
             'x-timestamp': Date.now(),
             'x-sent': true
@@ -57,26 +57,26 @@ app.get('/', function(req, res)
 });
 
 app.get(/^(.+)$/, function(req, res)
-{ 
+{
    console.log('static file request : ' + req.params);
-   res.sendfile( __dirname + req.params[0]); 
+   res.sendfile( __dirname + req.params[0]);
 });
 
 /* respuestas a las peticiones post en / */
-app.post('/search', textParser, function(req, res, next) 
+app.post('/search', textParser, function(req, res, next)
 {
     console.log( 'POST request received' );
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
     res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
-    
+
     var type = req.body.type;
-    var data = req.body.term;
-    
+    var data = req.body.data;
+
     console.log( req.body );
     console.log( type );
     console.log( data );
-    
+
     switch(type)
     {
         case "ini":
@@ -101,7 +101,7 @@ app.post('/search', textParser, function(req, res, next)
 function aut()
 {
     send = [ ];
-    for(var i in jsonAut) 
+    for(var i in jsonAut)
     {
         var arr = jsonAut[i];
         i++;
@@ -109,11 +109,11 @@ function aut()
     }
 }
 
-function pro( data ) 
+function pro( data )
 {
     send = [ ];
     var cod;
-    for(var i in jsonAut) 
+    for(var i in jsonAut)
     {
         var arr = jsonAut[i];
         i++;
@@ -122,12 +122,12 @@ function pro( data )
             cod = arr[0];
         }
     }
-    
-    for(var i in jsonPro) 
+
+    for(var i in jsonPro)
     {
         var arr = jsonPro[i];
         i++;
-        
+
         if( arr[0] === cod )
         {
             send.push(arr[2]);
@@ -135,11 +135,11 @@ function pro( data )
     }
 };
 
-function mun( data ) 
+function mun( data )
 {
     send = [ ];
     var cod;
-    for(var i in jsonPro) 
+    for(var i in jsonPro)
     {
         var arr = jsonPro[i];
         i++;
@@ -148,15 +148,15 @@ function mun( data )
             cod = arr[1];
         }
     }
-    
-    for(var i in jsonMun) 
+
+    for(var i in jsonMun)
     {
         var arr = jsonMun[i];
         i++;
-        
+
         if( arr[0] === cod )
         {
             send.push(arr[1]);
-        } 
+        }
     }
 };
