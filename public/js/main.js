@@ -27,26 +27,36 @@ $(document).ready(function () {
                 }
             }
         });
+
     $("#form-form").submit(
         function (event) {
-            const data = {'aut': $('#aut').val(), 'pro': $('#pro').val(), 'mun': $('#mun').val()};
+            let mun = $('#mun');
+            const data = {'aut': $('#aut').val(), 'pro': $('#pro').val(), 'mun': mun.val()};
             event.preventDefault();
-            $.ajax(
-                {
-                    url: window.location.href + "final",
-                    type: 'post',
-                    dataType: 'json',
-                    data: {type: 'complete', data: data},
-                    success: function (data, status) {
-                        if (status === 'success') {
-                            let alerta = '<div class="alert alert-success alert-dismissible">' +
-                                '   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
-                                '   <strong>¡Gracias!</strong> <p>' + $('#aut').val() + ' -> ' + $('#pro').val() + ' -> ' + $('#mun').val() + '</p>' +
-                                '</div>';
-                            $("#add-alerts").append(alerta);
+            if (mun.val() !== '' && $.inArray(mun.val(), arrayDataMun) !== -1) {
+                $.ajax(
+                    {
+                        url: window.location.href + "final",
+                        type: 'post',
+                        dataType: 'json',
+                        data: {type: 'complete', data: data},
+                        success: function (data, status) {
+                            if (status === 'success') {
+                                let alert = '<div class="alert alert-success alert-dismissible">' +
+                                    '   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                                    '   <strong>¡Gracias!</strong> <p>' + $('#aut').val() + ' -> ' + $('#pro').val() + ' -> ' + mun.val() + '</p>' +
+                                    '</div>';
+                                $("#add-alerts").append(alert);
+                            }
                         }
-                    }
-                });
+                    });
+            } else {
+                let alert = '<div class="alert alert-warning alert-dismissible">' +
+                    '   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                    '   <strong>¡Error!</strong> <p> El municipio no existe, selecciona otro municipio </p>' +
+                    '</div>';
+                $("#add-alerts").append(alert);
+            }
         }
     );
 
@@ -84,28 +94,22 @@ let revisaSiCorrecto = function (input) {
     const mun = $('#mun');
     mun.removeClass("input-success");
 
-    for (let key in arrayDataAut) {
-        if (arrayDataAut[key] === aut.val() && aut.val() !== '') {
-            aut.addClass("input-success");
-            if (input.prop('id') === 'aut') {
-                solicitaProvincia();
-            }
+    if (aut.val() !== '' && $.inArray(aut.val(), arrayDataAut) !== -1) {
+        aut.addClass("input-success");
+        if (input.prop('id') === 'aut') {
+            solicitaProvincia();
         }
     }
 
-    for (let key in arrayDataPro) {
-        if (arrayDataPro[key] === pro.val() && pro.val() !== '') {
-            pro.addClass("input-success");
-            if (input.prop('id') === 'pro') {
-                solicitaMunicipio();
-            }
+    if (pro.val() !== '' && $.inArray(pro.val(), arrayDataPro) !== -1) {
+        pro.addClass("input-success");
+        if (input.prop('id') === 'pro') {
+            solicitaMunicipio();
         }
     }
 
-    for (let key in arrayDataMun) {
-        if (arrayDataMun[key] === mun.val() && mun.val() !== '') {
-            mun.addClass("input-success");
-        }
+    if (mun.val() !== '' && $.inArray(pro.val(), arrayDataMun) !== -1) {
+        mun.addClass("input-success");
     }
 };
 

@@ -91,7 +91,7 @@ app.post('/search', textParser, function (req, res) {
 
 app.post('/final', textParser, function (req, res) {
     console.log(req.body);
-    res.send(JSON.stringify("Gracias"));
+    res.send(JSON.stringify("incorrect"));
 });
 
 function aut() {
