@@ -1,84 +1,76 @@
 /*
  * @author N.Gárate
  * created 12.04.2017
+ * update 27.04.2018
  */
 'use strict';
 
-var express = require( 'express' );
-var path = require( 'path' );
-var bodyParser = require('body-parser');
-var XLSX = require('xlsx');
-var app = express();
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const XLSX = require('xlsx');
+const app = express();
 
-var textParser = bodyParser.urlencoded({ extended: false });
+const textParser = bodyParser.urlencoded({extended: false});
 
-var send = [ ];
+let send = [];
 
 
 /* Excel con los datos de las autonomias, provincias y municipio de españa */
-var autBook = XLSX.readFile('aut.xlsx').Sheets['uno'];
-var proBook = XLSX.readFile('pro.xlsx').Sheets['uno'];
-var munBook = XLSX.readFile('mun.xlsx').Sheets['uno'];
+const autBook = XLSX.readFile('aut.xlsx').Sheets['uno'];
+const proBook = XLSX.readFile('pro.xlsx').Sheets['uno'];
+const munBook = XLSX.readFile('mun.xlsx').Sheets['uno'];
 
-var jsonAut = XLSX.utils.sheet_to_json(autBook, {header : 1});
-var jsonPro = XLSX.utils.sheet_to_json(proBook, {header : 1});
-var jsonMun = XLSX.utils.sheet_to_json(munBook, {header : 1});
+const jsonAut = XLSX.utils.sheet_to_json(autBook, {header: 1});
+const jsonPro = XLSX.utils.sheet_to_json(proBook, {header: 1});
+const jsonMun = XLSX.utils.sheet_to_json(munBook, {header: 1});
 
-
-
-var port = 3000;
+const port = 3000;
 app.listen(port);
-require('dns').lookup(require('os').hostname(), function (err, add, fam)
-{
-    console.log('Listening at ' + add +':' +port);
+
+require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+    console.log('Listening at ' + add + ':' + port);
 });
 
-
 /* Web server de los archivos estaticos */
-app.use('/img',express.static(path.join(__dirname, '/public/img')));
-app.use('/js',express.static(path.join(__dirname, '/public/js')));
-app.use('/css',express.static(path.join(__dirname, '/public/css')));
+app.use('/img', express.static(path.join(__dirname, '/public/img')));
+app.use('/js', express.static(path.join(__dirname, '/public/js')));
+app.use('/css', express.static(path.join(__dirname, '/public/css')));
 
-app.get('/', function(req, res)
-{
+app.get('/', function (req, res) {
     res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
-    var options =
-    {
-        root: __dirname + '/public/',
-        dotfiles: 'deny',
-        headers:
+    const options =
         {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
-    };
+            root: __dirname + '/public/',
+            dotfiles: 'deny',
+            headers:
+                {
+                    'x-timestamp': Date.now(),
+                    'x-sent': true
+                }
+        };
 
     res.sendFile('home.html', options);
 });
 
-app.get(/^(.+)$/, function(req, res)
-{
-   console.log('static file request : ' + req.params);
-   res.sendfile( __dirname + req.params[0]);
+app.get(/^(.+)$/, function (req, res) {
+    console.log('static file request : ' + req.params);
+    res.sendFile(__dirname + req.params[0]);
 });
 
 /* respuestas a las peticiones post en / */
-app.post('/search', textParser, function(req, res, next)
-{
-    console.log( 'POST request received' );
+app.post('/search', textParser, function (req, res) {
+    console.log('POST request received');
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
     res.header("Access-Control-Allow-Headers", "Content-Type, application/x-www-form-encoded");
 
-    var type = req.body.type;
-    var data = req.body.data;
+    const type = req.body.type;
+    const data = req.body.data;
 
-    console.log( req.body );
-    console.log( type );
-    console.log( data );
+    console.log(req.body);
 
-    switch(type)
-    {
+    switch (type) {
         case "ini":
             aut();
             res.send(JSON.stringify(send));
@@ -97,66 +89,58 @@ app.post('/search', textParser, function(req, res, next)
     }
 });
 
+app.post('/final', textParser, function (req, res) {
+    console.log(req.body);
+    res.send(JSON.stringify("Gracias"));
+});
 
-function aut()
-{
-    send = [ ];
-    for(var i in jsonAut)
-    {
-        var arr = jsonAut[i];
+function aut() {
+    send = [];
+    for (let i in jsonAut) {
+        const arr = jsonAut[i];
         i++;
         send.push(arr[1]);
     }
 }
 
-function pro( data )
-{
-    send = [ ];
-    var cod;
-    for(var i in jsonAut)
-    {
-        var arr = jsonAut[i];
+function pro(data) {
+    send = [];
+    let cod;
+    for (let i in jsonAut) {
+        const arr = jsonAut[i];
         i++;
-        if( arr[1] === data )
-        {
+        if (arr[1] === data) {
             cod = arr[0];
         }
     }
 
-    for(var i in jsonPro)
-    {
-        var arr = jsonPro[i];
+    for (let i in jsonPro) {
+        const arr = jsonPro[i];
         i++;
 
-        if( arr[0] === cod )
-        {
+        if (arr[0] === cod) {
             send.push(arr[2]);
         }
     }
-};
+}
 
-function mun( data )
-{
-    send = [ ];
-    var cod;
-    for(var i in jsonPro)
-    {
-        var arr = jsonPro[i];
+function mun(data) {
+    send = [];
+    let cod;
+    for (let i in jsonPro) {
+        const arr = jsonPro[i];
         i++;
-        if( arr[2] === data )
-        {
+        if (arr[2] === data) {
             cod = arr[1];
         }
     }
 
-    for(var i in jsonMun)
-    {
-        var arr = jsonMun[i];
+    for (let i in jsonMun) {
+        const arr = jsonMun[i];
         i++;
 
-        if( arr[0] === cod )
-        {
+        if (arr[0] === cod) {
             send.push(arr[1]);
         }
     }
-};
+}
