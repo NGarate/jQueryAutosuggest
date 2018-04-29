@@ -8,8 +8,7 @@ Esto es un proyecto con autosuggest en jQuery
 
 	*Arrancar el servidor con "node main"*
 
-	*Y abrir el navegador en la ip y puerto proporcionadas en la consola*
-
+	*Y abrir el navegador desde tú ip o localhost y el puerto 3000*
 
 El server esta hecho en NodeJS con ExpressJS, también usa SheetJS y body-parser.
 
