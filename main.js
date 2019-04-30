@@ -13,24 +13,11 @@ const app = express();
 
 const textParser = bodyParser.urlencoded({extended: false});
 
-let send = [];
-
-
-/* Excel con los datos de las autonomias, provincias y municipio de españa */
-const autBook = XLSX.readFile('aut.xlsx').Sheets['uno'];
-const proBook = XLSX.readFile('pro.xlsx').Sheets['uno'];
-const munBook = XLSX.readFile('mun.xlsx').Sheets['uno'];
-
-const jsonAut = XLSX.utils.sheet_to_json(autBook, {header: 1});
-const jsonPro = XLSX.utils.sheet_to_json(proBook, {header: 1});
-const jsonMun = XLSX.utils.sheet_to_json(munBook, {header: 1});
-
-const port = 3000;
-app.listen(port);
-
-require('dns').lookup(require('os').hostname(), function (err, add, fam) {
-    console.log('Listening at ' + add + ':' + port);
-});
+const jsons = {
+    aut: getJSONFromXLS('aut.xlsx').map(a => a[1]),
+    pro: getJSONFromXLS('pro.xlsx'),
+    mun: getJSONFromXLS('mun.xlsx')
+};
 
 /* Web server de los archivos estaticos */
 app.use('/img', express.static(path.join(__dirname, '/public/img')));
@@ -72,19 +59,16 @@ app.post('/search', textParser, function (req, res) {
 
     switch (type) {
         case "ini":
-            aut();
-            res.send(JSON.stringify(send));
+            res.json(aut());
             break;
         case "aut":
-            pro(data);
-            res.send(JSON.stringify(send));
+            res.json(getPro(data));
             break;
         case "pro":
-            mun(data);
-            res.send(JSON.stringify(send));
+            res.json(mun(data));
             break;
         case "form":
-            res.send(JSON.stringify(data));
+            res.json(data);
             break;
     }
 });
@@ -94,18 +78,21 @@ app.post('/final', textParser, function (req, res) {
     res.send(JSON.stringify("incorrect"));
 });
 
+const port = 3000;
+app.listen(port);
+
+require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+    console.log('Listening at ' + add + ':' + port);
+});
+
 function aut() {
-    send = [];
-    for (let i in jsonAut) {
-        const arr = jsonAut[i];
-        i++;
-        send.push(arr[1]);
-    }
+    return jsons.aut;
 }
 
 function pro(data) {
-    send = [];
+    const pro = [];
     let cod;
+
     for (let i in jsonAut) {
         const arr = jsonAut[i];
         i++;
@@ -119,13 +106,15 @@ function pro(data) {
         i++;
 
         if (arr[0] === cod) {
-            send.push(arr[2]);
+            pro.push(arr[2]);
         }
     }
+    return pro;
 }
 
 function mun(data) {
-    send = [];
+    const muns = [];
+
     let cod;
     for (let i in jsonPro) {
         const arr = jsonPro[i];
@@ -140,7 +129,13 @@ function mun(data) {
         i++;
 
         if (arr[0] === cod) {
-            send.push(arr[1]);
+            muns.push(arr[1]);
         }
     }
+    return muns;
+}
+
+function getJSONFromXls(file) {
+    const book = XLSX.readFile(file).Sheets['uno'];
+    return XLSX.utils.sheet_to_json(autBook, {header: 1});
 }
