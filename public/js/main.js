@@ -1,166 +1,109 @@
 /*
 *  @author N.Gárate
 *  created on 12.04.2017
-*  update on 16/06/2017
-*  update on 27/04/2018
+*  last updated on 02/05/2019
 */
-'use strict';
-
-const uri = window.location.href + 'search';
-
-let arrayDataAut = [];
-let arrayDataPro = [];
-let arrayDataMun = [];
+const allInputsIds = ['aut', 'pro', 'mun'];
 
 $(document).ready(function () {
-    $.ajax(
-        {
-            url: uri,
+    getAutInfoToAutocomplete();
+
+    addSubmitEvent('form-form', event => () => {
+        event.preventDefault();
+        const data = {
+            aut: $('#aut').val(),
+            pro: $('#pro').val(),
+            mun: mun.val()
+        };
+        $.ajax({
+            url: "/final",
             type: 'post',
             dataType: 'json',
-            data: {type: 'ini', data: 'none'},
-            success: function (data, status) {
-                console.log(status);
-                if (status === 'success') {
-                    arrayDataAut = data;
-                    $("#aut").autocomplete({source: arrayDataAut});
-                }
-            }
+            data,
+            success: showSuccessAlert,
+            error: showErrorAlert
         });
-
-    $("#form-form").submit(
-        function (event) {
-            let mun = $('#mun');
-            const data = {'aut': $('#aut').val(), 'pro': $('#pro').val(), 'mun': mun.val()};
-            event.preventDefault();
-            if (mun.val() !== '' && $.inArray(mun.val(), arrayDataMun) !== -1) {
-                $.ajax(
-                    {
-                        url: window.location.href + "final",
-                        type: 'post',
-                        dataType: 'json',
-                        data: {type: 'complete', data: data},
-                        success: function (data, status) {
-                            if (status === 'success') {
-                                let alert = '<div class="alert alert-success alert-dismissible">' +
-                                    '   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
-                                    '   <strong>¡Gracias!</strong> <p>' + $('#aut').val() + ' -> ' + $('#pro').val() + ' -> ' + mun.val() + '</p>' +
-                                    '</div>';
-                                $("#add-alerts").append(alert);
-                            }
-                        }
-                    });
-            } else {
-                let alert = '<div class="alert alert-warning alert-dismissible">' +
-                    '   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
-                    '   <strong>¡Error!</strong> <p> El municipio no existe, selecciona otro municipio </p>' +
-                    '</div>';
-                $("#add-alerts").append(alert);
-            }
-        }
-    );
-
+    });
 });
 
+function getAutInfoToAutocomplete() {
+    $.ajax({
+        url: "/aut",
+        type: 'get',
+        dataType: 'json',
+        success: addAutocomplete('aut')
+    });
+}
+
+function showSuccessAlert() {
+    const alert = `<div class="alert alert-success alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">
+            &times;
+        </a>
+        <strong>¡Gracias!</strong>
+        <p>
+            ${$('#aut').val()} -> ${$('#pro').val()} -> ${$('#mun').val()}
+        </p>
+    </div>`;
+    $("#add-alerts").append(alert);   
+}
+
+function showErrorAlert() {
+    const alert = `<div class="alert alert-warning alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                &times;
+            </a>
+        <strong>¡Error!</strong>
+        <p> El municipio no existe, selecciona otro municipio </p>
+    </div>`;
+    $("#add-alerts").append(alert);
+}
+
+function addSubmitEvent(id, action) {
+    $(`#${id}`).submit(action(event));
+}
+
 $('#aut').on('input', function () {
-    const mun = $("#mun");
-    const pro = $("#pro");
-    pro.val('');
-    arrayDataPro = [];
-    pro.autocomplete({source: arrayDataPro});
-    mun.val('');
-    arrayDataMun = [];
-    mun.autocomplete({source: arrayDataMun});
-    revisaSiCorrecto($(this));
+    $("#pro").val('');
+    $("#mun").val('');
+    checkInput($(this));
 });
 
 $('#pro').on('input', function () {
-    const mun = $("#mun");
-    mun.val('');
-    arrayDataMun = [];
-    mun.autocomplete({source: arrayDataMun});
-    revisaSiCorrecto($(this));
+    $("#mun").val('');
+    checkInput($(this));
 });
 
-$("input").focusout(function () {
-    revisaSiCorrecto($(this));
+$('#mun').on('input', function () {
+    checkInput($(this));
 });
 
-let revisaSiCorrecto = function (input) {
-    const aut = $('#aut');
-    aut.removeClass("input-success");
-    const pro = $('#pro');
-    pro.removeClass("input-success");
-    const mun = $('#mun');
-    mun.removeClass("input-success");
-
-    if (aut.val() !== '' && $.inArray(aut.val(), arrayDataAut) !== -1) {
-        aut.addClass("input-success");
-        if (input.prop('id') === 'aut') {
-            solicitaProvincia();
-        }
-    }
-
-    if (pro.val() !== '' && $.inArray(pro.val(), arrayDataPro) !== -1) {
-        pro.addClass("input-success");
-        if (input.prop('id') === 'pro') {
-            solicitaMunicipio();
-        }
-    }
-
-    if (mun.val() !== '' && $.inArray(pro.val(), arrayDataMun) !== -1) {
-        mun.addClass("input-success");
-    }
-};
-
-let solicitaProvincia = function () {
-    $.ajax(
-        {
-            url: uri,
-            type: 'post',
+function checkInput(input) {
+    const id = input.attr('id');
+    input.removeClass("input-success");
+    
+    if(isValueValid(input)) {
+        input.addClass("input-success");    
+        $.ajax({
+            url: `/${getNextId(id)}`,
+            type: 'get',
             dataType: 'json',
-            data: {type: 'aut', data: $('#aut').val()},
-            success: function (data, status) {
-                if (status === 'success') {
-                    console.log("Provincias de: " + $('#aut').val() + " ||| recibidas: " + data);
-                    arrayDataPro = data;
-
-                    $("#pro").autocomplete({source: arrayDataPro});
-                }
-            }
+            success: addAutocomplete(getNextId(id))
         });
+    }
 };
 
-let solicitaMunicipio = function () {
-    $.ajax(
-        {
-            url: uri,
-            type: 'post',
-            dataType: 'json',
-            data: {type: 'pro', data: $('#pro').val()},
-            success: function (data, status) {
-                if (status === 'success') {
-                    console.log("Municipios recibidas");
-                    arrayDataMun = data;
-                    $("#mun").autocomplete({source: arrayDataMun});
-                }
-            }
-        });
-};
+function addAutocomplete(id) => data => {
+    $(id).autocomplete({source: data});
+}
 
-window.onload = function () {
-    setTimeout(function () {
-        window.performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {};
-        let t = performance.timing || {};
+function isValueValid(loc) {
+    const source = loc.autocomplete( "option", "source" );
+    return source.some(e => e == loc.val());
+}
 
-        if (!t) {
-            return;
-        }
-        let start = t.navigationStart,
-            end = t.loadEventEnd;
-        let loadTime = (end - start) / 1000;
-
-        $("#loadTime").html(loadTime + " segundos");
-    }, 0);
-};
-
+function getNextId(id) {
+    const actualId = allInputsIds.findIndex(i => i == id)
+    const nextId = actualId + 1;
+    return allInputsIds[nextId];
+}
