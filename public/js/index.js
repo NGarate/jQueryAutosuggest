@@ -8,7 +8,7 @@ const allInputsIds = ["aut", "pro", "mun"];
 $(document).ready(function() {
 	getAutInfoToAutocomplete();
 
-	addSubmitEvent("form-form", event => () => {
+	addSubmitEvent("form-form", event => {
 		event.preventDefault();
 		const data = {
 			aut: $("#aut").val(),
@@ -60,7 +60,7 @@ function showErrorAlert() {
 }
 
 function addSubmitEvent(id, action) {
-	$(`#${id}`).submit(action(event));
+	$(`#${id}`).submit(action);
 }
 
 $("#aut").on("input", function() {
@@ -94,9 +94,7 @@ function checkInput(input) {
 }
 
 function addAutocomplete(id) {
-	data => {
-		$(id).autocomplete({ source: data });
-	};
+	return data => $(id).autocomplete({ source: data });
 }
 
 function isValueValid(loc) {

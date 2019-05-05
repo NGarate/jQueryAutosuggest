@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /*
  * @author N.Gárate
  * created 12.04.2017
@@ -26,7 +27,7 @@ app.get("/", function(req, res) {
 		"Content-Type, application/x-www-form-encoded"
 	);
 	const options = {
-		root: __dirname + "/public/",
+		root: path.join(__dirname, "public"),
 		dotfiles: "deny",
 		headers: {
 			"x-timestamp": Date.now(),
@@ -83,6 +84,7 @@ app.post("/final", function(req, res) {
 const port = 3000;
 app.listen(port);
 
+// eslint-disable-next-line promise/prefer-await-to-callbacks
 require("dns").lookup(require("os").hostname(), function(err, add) {
 	console.log("Listening at " + add + ":" + port);
 });
@@ -130,14 +132,14 @@ function getProObject() {
 }
 
 function getObjectFromArray(array, keyIndex, valueIndex) {
-	const o = {};
+	const obj = {};
 
 	for (const a of array) {
 		const key = a[keyIndex];
 		const value = a[valueIndex];
-		o[key] = value;
+		obj[key] = value;
 	}
-	return o;
+	return obj;
 }
 
 function getJSONFromXLS(file) {

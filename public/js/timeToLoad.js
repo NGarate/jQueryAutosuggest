@@ -8,7 +8,8 @@ const addAutocomplete = id => data => {
 
 function getLoadTime(data) {
 	const t = getPerformanceObject().timing || {};
-	const loadTime = (t.loadEventEnd - t.navigationStart) / 1000;
+	const SECOND = 1000;
+	const loadTime = (t.loadEventEnd - t.navigationStart) / SECOND;
 	return loadTime;
 }
 
