@@ -13,3 +13,11 @@ Esto es un proyecto con autosuggest en jQuery
 El server esta hecho en NodeJS con ExpressJS, también usa SheetJS y body-parser.
 
 La app usa jQuery, jQueryUI, bootstrap y fontAwesome
+
+*TODO*
+* [x] Clean git and package.json
+* [ ] Snowpack
+* [ ] Tests
+* [ ] Migrate to docker
+* [ ] DevSecOps
+* [ ] Migrate to kubernetes with helm chart
