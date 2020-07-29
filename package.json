@@ -8,6 +8,9 @@
     "client",
     "browser"
   ],
+  "scripts": {
+    "start": "node main"
+  },
   "author": "Noel Gárate",
   "contributors": [],
   "dependencies": {
@@ -19,5 +22,9 @@
   "main": "main.js",
   "devDependencies": {},
   "license": "ISC",
-  "description": "app jQuery, Nodejs, con autosuggest"
+  "description": "app jQuery, Nodejs, con autosuggest",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/NGarate/jQueryAutosuggest"
+  }
 }
