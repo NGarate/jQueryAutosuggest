@@ -16,8 +16,8 @@ La app usa jQuery, jQueryUI, bootstrap y fontAwesome
 
 *TODO*
 * [x] Clean git and package.json
+* [x] Migrate to docker
 * [ ] Snowpack
 * [ ] Tests
-* [ ] Migrate to docker
 * [ ] DevSecOps
 * [ ] Migrate to kubernetes with helm chart
