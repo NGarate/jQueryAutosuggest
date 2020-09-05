@@ -10,7 +10,7 @@ Esto es un proyecto con autosuggest en jQuery
 
  - *Y abrir el navegador desde tú ip o localhost y el puerto 3000*
 
-El server esta hecho en NodeJS con ExpressJS, también usa SheetJS y body-parser.
+El server esta hecho en NodeJS con `ExpressJS`, también usa `xlsx` y `body-parser`.
 
 La app usa jQuery, jQueryUI, bootstrap y fontAwesome
 
