@@ -15,14 +15,14 @@
   "author": "Noel Gárate",
   "contributors": [],
   "dependencies": {
-    "body-parser": "^1.18.2",
-    "express": "^4.16.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
     "path": "^0.12.7",
     "xlsx": "^0.9.13"
   },
   "main": "main.js",
   "devDependencies": {
-    "jest": "^26.1.0"
+    "jest": "^26.4.2"
   },
   "license": "ISC",
   "description": "app jQuery, Nodejs, con autosuggest",
