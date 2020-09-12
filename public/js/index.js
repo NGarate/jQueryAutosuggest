@@ -94,7 +94,7 @@ function checkInput(input) {
 }
 
 function addAutocomplete(id) {
-	return data => $(id).autocomplete({ source: data });
+	return data => $(`#${id}`).autocomplete({ source: data });
 }
 
 function isValueValid(loc) {
