@@ -38,11 +38,6 @@ app.get("/", function(req, res) {
 	res.sendFile("home.html", options);
 });
 
-app.get(/^(.+)$/, function(req, res) {
-	console.log("static file request : " + req.params);
-	res.sendFile(path.join(__dirname, req.params[0]));
-});
-
 app.get("/aut", function(req, res) {
 	console.log("GET AUT");
 
