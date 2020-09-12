@@ -2,10 +2,6 @@ window.onload = function() {
 	setTimeout(() => printLoadTime(getLoadTime()), 0);
 };
 
-const addAutocomplete = id => data => {
-	$(`#${id}`).autocomplete({ source: data });
-};
-
 function getLoadTime(data) {
 	const t = getPerformanceObject().timing || {};
 	const SECOND = 1000;
