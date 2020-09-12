@@ -1,6 +1,6 @@
 {
   "name": "jQueryAutoSuggest",
-  "version": "2.0.4",
+  "version": "2.1.1",
   "keywords": [
     "util",
     "functional",
@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "start": "node index",
-    "test": "jest"
+    "test": "jest",
+    "release": "git tag "
   },
   "author": "Noel Gárate",
   "contributors": [],
