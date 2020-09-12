@@ -9,7 +9,7 @@
     "browser"
   ],
   "scripts": {
-    "start": "node main",
+    "start": "node index",
     "test": "jest"
   },
   "author": "Noel Gárate",
